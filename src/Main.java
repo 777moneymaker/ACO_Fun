@@ -1,40 +1,63 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    private static Graph G = new Graph(50);
-    private static int bestDistance = (int) Double.POSITIVE_INFINITY;
+    private static Graph graph;
+    private static int noChange, startDistance, bestDistance = (int) Double.POSITIVE_INFINITY;
+    private static boolean startAssign = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scan = new Scanner(System.in);
-        System.out.println("Give colony, alpha, beta, rho: ");
-        double colony = scan.nextDouble(), alpha = scan.nextDouble(), beta = scan.nextDouble(), rho = scan.nextDouble();
-        for (int i = 0; i < 50; i++) {
+        System.out.println("Give a file to load matrix from:");
+        String graphFile = scan.next();
+        System.out.println("Give graph size, iterations, colony, alpha, beta, rho:");
+        Double graphSize = scan.nextDouble(),
+                iteration = scan.nextDouble(),
+                colony = scan.nextDouble(),
+                alpha = scan.nextDouble(),
+                beta = scan.nextDouble(),
+                rho = scan.nextDouble();
+        Main.graph = new Graph(graphSize.intValue());
+        Main.graph.loadMatrix(graphFile);
+        for (int i = 0; i < iteration.intValue(); i++) {
             System.out.println("Gen no: " + i);
             Main.optimize(colony, alpha, beta, rho);
         }
+        System.out.println("Start result: " + Main.startDistance + " Final result: " + Main.bestDistance);
     }
 
-    private static void optimize(double colony, double alpha, double beta, double rho) {
-        ArrayList<Ant> ants = new ArrayList<>();
-        ArrayList<Ant> best_ants = new ArrayList<>();
-        for (int i = 0; i < (int) colony; i++) {
-            ants.add(new Ant(Main.G, alpha, beta));
+    private static void optimize(Double colony, Double alpha, Double beta, Double rho) {
+        boolean changeMade = false;
+        if(Main.noChange > 20){
+            Main.graph.smoothPheromone();
+            Main.noChange = 0;
+        }
+        ArrayList<Ant> ants = new ArrayList<>(), best_ants = new ArrayList<>();
+        for (int i = 0; i < colony.intValue(); i++) {
+            ants.add(new Ant(Main.graph, alpha, beta));
         }
         for (var A : ants) {
             A.travel();
+            if(!Main.startAssign){
+                Main.startDistance = A.getDistance();
+                Main.startAssign = true;
+            }
             if (A.getDistance() < Main.bestDistance) {
                 Main.bestDistance = A.getDistance();
-                System.out.println(Main.bestDistance);
+                Main.noChange = 0;
+                changeMade = true;
                 best_ants.add(A);
+                System.out.println("Best cost: " + Main.bestDistance);
             }
         }
+        if(!changeMade) Main.noChange++;
         for (var A : best_ants) {
             A.applyPheromone();
         }
-        for (int i = 0; i < Main.G.getVertex(); i++) {
-            for (int j = 0; j < Main.G.getVertex(); j++) {
-                Main.G.getPheromone()[i][j] *= rho;
+        for (int i = 0; i < Main.graph.getVertex(); i++) {
+            for (int j = 0; j < Main.graph.getVertex(); j++) {
+                Main.graph.getPheromone()[i][j] *= 1.0 - rho;
             }
         }
     }

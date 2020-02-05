@@ -37,7 +37,7 @@ public class Graph{
         for(var row : this.pheromone){
             for(int i = 0; i < row.length; i++){
                 if(row[i] > min_pheromone){
-                    row[i] = min_pheromone * Math.log(max/min);
+                    row[i] = min_pheromone * Math.log(max/min_pheromone);
                 }
             }
         }

@@ -4,28 +4,37 @@ import java.util.Set;
 import java.util.ArrayList;
 
 public class Ant {
-    private Integer previous = null, current, distance = 0;
-    private double alpha, beta;
-    private ArrayList<Integer> visited = new ArrayList<>();
-    private Graph graph;
+    private static Graph graph;
+    private static double alpha, beta, rho;
 
-    public Ant(Graph G, double alpha, double beta) {
-        this.graph = G;
+    private Integer previous = null, current, distance = 0;
+    private ArrayList<Integer> visited = new ArrayList<>();
+
+    public Ant() {
         this.current = drawStart();
         this.visited.add(this.current);
-        this.alpha = alpha;
-        this.beta = beta;
     }
 
     private int drawStart() {
-        return new Random().nextInt(this.graph.getVertex());
+        return new Random().nextInt(Ant.graph.getVertex());
+    }
+
+    public static void setParameters(Graph graph, double alpha, double beta, double rho){
+        Ant.graph = graph;
+        Ant.alpha = alpha;
+        Ant.beta = beta;
+        Ant.rho = rho;
+    }
+
+    public static Graph getGraph(){
+        return Ant.graph;
     }
 
 
     public void travel() {
         this.visited.trimToSize();
         Set<Integer> unique_visited = new HashSet<>(this.visited);
-        while (unique_visited.size() != this.graph.getVertex()) {
+        while (unique_visited.size() != Ant.graph.getVertex()) {
             this.selectNext();
             unique_visited = new HashSet<>(this.visited);
         }
@@ -52,21 +61,29 @@ public class Ant {
                 }
             }
         }
-        if(this.previous != null && this.graph.getMatrix()[this.previous][this.current] < this.graph.getMatrix()[this.current][next]){
-            this.distance -= this.graph.getMatrix()[this.previous][this.current];
-            this.distance += this.graph.getMatrix()[this.previous][this.current] * 10;
+        if(this.previous != null && Ant.graph.getMatrix()[this.previous][this.current] < Ant.graph.getMatrix()[this.current][next]){
+            this.distance -= Ant.graph.getMatrix()[this.previous][this.current];
+            this.distance += Ant.graph.getMatrix()[this.previous][this.current] * 10;
         }else {
-            this.distance += this.graph.getMatrix()[this.current][next];
+            this.distance += Ant.graph.getMatrix()[this.current][next];
         }
         this.visited.add(next);
         this.previous = this.current;
         this.current = next;
     }
 
+    public int getDistance() {
+        return this.distance;
+    }
+
+    public ArrayList<Integer> getVisited() {
+        return this.visited;
+    }
+
     private ArrayList<Integer> generateAllowedMoves() {
         ArrayList<Integer> allowed = new ArrayList<>();
         for (int i = 0; i < graph.getVertex(); i++) {
-            if (this.graph.getMatrix()[this.current][i] != 0 && !this.visited.contains(i)) {
+            if (Ant.graph.getMatrix()[this.current][i] != 0 && !this.visited.contains(i)) {
                 allowed.add(i);
             }
         }
@@ -76,8 +93,8 @@ public class Ant {
             for (int i = 0; i < this.visited.size() / 4; i++) {
                 temp_visited.remove(R.nextInt(temp_visited.size()));
             }
-            for (int i = 0; i < this.graph.getVertex(); i++) {
-                if (this.graph.getMatrix()[this.current][i] != 0 && !temp_visited.contains(i)) {
+            for (int i = 0; i < Ant.graph.getVertex(); i++) {
+                if (Ant.graph.getMatrix()[this.current][i] != 0 && !temp_visited.contains(i)) {
                     allowed.add(i);
                 }
             }
@@ -89,12 +106,12 @@ public class Ant {
     private Double calculateProbability(int next) throws ArithmeticException{
         double numerator, denominator = 0;
 
-        numerator = Math.pow(this.graph.getPheromone()[this.current][next], this.alpha) *
-                (1 / Math.pow(this.graph.getMatrix()[this.current][next], this.beta));
+        numerator = Math.pow(Ant.graph.getPheromone()[this.current][next], Ant.alpha) *
+                (1 / Math.pow(Ant.graph.getMatrix()[this.current][next], Ant.beta));
 
         for (var move : this.generateAllowedMoves()) {
-            denominator += Math.pow(this.graph.getPheromone()[this.current][move], this.alpha) *
-                    (1 / Math.pow(this.graph.getMatrix()[this.current][move], this.beta));
+            denominator += Math.pow(Ant.graph.getPheromone()[this.current][move], Ant.alpha) *
+                    (1 / Math.pow(Ant.graph.getMatrix()[this.current][move], Ant.beta));
         }
 
         if(denominator == 0.0)
@@ -105,15 +122,16 @@ public class Ant {
 
     public void applyPheromone() {
         for (int i = 0, j = 1; j < this.visited.size(); i++, j++) {
-            this.graph.getPheromone()[this.visited.get(i)][this.visited.get(j)] += 1.0 / this.distance;
+            Ant.graph.getPheromone()[this.visited.get(i)][this.visited.get(j)] += 1.0 / this.distance;
+            Ant.graph.getPheromone()[this.visited.get(j)][this.visited.get(i)] += 1.0 / this.distance;
         }
     }
 
-    public int getDistance() {
-        return this.distance;
-    }
-
-    public ArrayList<Integer> getVisited() {
-        return this.visited;
+    public static void vaporize(){
+        for (int i = 0; i < Ant.graph.getVertex(); i++) {
+            for (int j = 0; j < Ant.graph.getVertex(); j++) {
+                graph.getPheromone()[i][j] *= 1.0 - Ant.rho;
+            }
+        }
     }
 }

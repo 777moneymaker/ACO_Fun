@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    private static Graph graph;
     private static int noChange, startDistance, bestDistance = (int) Double.POSITIVE_INFINITY;
     private static boolean startAssign = false;
 
@@ -18,24 +17,25 @@ public class Main {
                 alpha = scan.nextDouble(),
                 beta = scan.nextDouble(),
                 rho = scan.nextDouble();
-        Main.graph = new Graph(graphSize.intValue());
-        Main.graph.loadMatrix(graphFile);
-        for (int i = 0; i < iteration.intValue(); i++) {
-            System.out.println("Gen no: " + i);
-            Main.optimize(colony, alpha, beta, rho);
+        Graph graph = new Graph(graphSize.intValue());
+        graph.loadMatrix(graphFile);
+        Ant.setParameters(graph, alpha, beta, rho);
+        for (int i = 0; i < iteration.intValue(); ) {
+            System.out.println("Gen no: " + ++i);
+            Main.optimize(colony);
         }
         System.out.println("Start result: " + Main.startDistance + " Final result: " + Main.bestDistance);
     }
 
-    private static void optimize(Double colony, Double alpha, Double beta, Double rho) {
+    private static void optimize(Double colony) {
         boolean changeMade = false;
         if(Main.noChange > 20){
-            Main.graph.smoothPheromone();
+            Ant.getGraph().smoothPheromone();
             Main.noChange = 0;
         }
         ArrayList<Ant> ants = new ArrayList<>(), best_ants = new ArrayList<>();
         for (int i = 0; i < colony.intValue(); i++) {
-            ants.add(new Ant(Main.graph, alpha, beta));
+            ants.add(new Ant());
         }
         for (var A : ants) {
             A.travel();
@@ -54,11 +54,6 @@ public class Main {
         if(!changeMade) Main.noChange++;
         for (var A : best_ants) {
             A.applyPheromone();
-        }
-        for (int i = 0; i < Main.graph.getVertex(); i++) {
-            for (int j = 0; j < Main.graph.getVertex(); j++) {
-                Main.graph.getPheromone()[i][j] *= 1.0 - rho;
-            }
         }
     }
 }

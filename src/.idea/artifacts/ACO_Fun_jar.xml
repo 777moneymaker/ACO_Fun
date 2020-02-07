@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ACO_Fun:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ACO_Fun_jar</output-path>
+    <root id="archive" name="ACO_Fun.jar">
+      <element id="module-output" name="ACO_Fun" />
+    </root>
+  </artifact>
+</component>

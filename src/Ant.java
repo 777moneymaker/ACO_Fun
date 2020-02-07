@@ -6,7 +6,6 @@ import java.util.ArrayList;
 public class Ant {
     private static Graph graph;
     private static double alpha, beta, rho;
-
     private Integer previous = null, current, distance = 0;
     private ArrayList<Integer> visited = new ArrayList<>();
 
@@ -15,10 +14,13 @@ public class Ant {
         this.visited.add(this.current);
     }
 
-    private int drawStart() {
-        return new Random().nextInt(Ant.graph.getVertex());
-    }
-
+    /**
+     * Parameters setting for ACO.
+     * @param graph Graph object for ant to access.
+     * @param alpha Pheromone impact.
+     * @param beta Distance impact.
+     * @param rho Vaporize coefficient.
+     */
     public static void setParameters(Graph graph, double alpha, double beta, double rho){
         Ant.graph = graph;
         Ant.alpha = alpha;
@@ -26,20 +28,27 @@ public class Ant {
         Ant.rho = rho;
     }
 
-    public static Graph getGraph(){
-        return Ant.graph;
-    }
-
-
+    /**
+     * Travel method. Calls the method for selecting next.
+     */
     public void travel() {
         this.visited.trimToSize();
         Set<Integer> unique_visited = new HashSet<>(this.visited);
+        long start = System.currentTimeMillis();
         while (unique_visited.size() != Ant.graph.getVertex()) {
             this.selectNext();
+            long end = System.currentTimeMillis();
+            if((end - start) / 1000.0 > 3.0){
+                System.out.println("Ant was travelling too long. Breaking...");
+                break;
+            }
             unique_visited = new HashSet<>(this.visited);
         }
     }
 
+    /**
+     * Method for calculating the next move on the basis of current node.
+     */
     private void selectNext() {
         int next = -1;
         ArrayList<Integer> allowed = this.generateAllowedMoves();
@@ -72,14 +81,18 @@ public class Ant {
         this.current = next;
     }
 
-    public int getDistance() {
-        return this.distance;
+    /**
+     * Random choice from possible starting nodes.
+     * @return Random starting node.
+     */
+    private int drawStart() {
+        return new Random().nextInt(Ant.graph.getVertex());
     }
 
-    public ArrayList<Integer> getVisited() {
-        return this.visited;
-    }
-
+    /**
+     * Generates allowed moves by accessing adjacent nodes of the current vertex.
+     * @return ArrayList of allowed moves.
+     */
     private ArrayList<Integer> generateAllowedMoves() {
         ArrayList<Integer> allowed = new ArrayList<>();
         for (int i = 0; i < graph.getVertex(); i++) {
@@ -89,9 +102,9 @@ public class Ant {
         }
         while (allowed.isEmpty()) {
             ArrayList<Integer> temp_visited = (ArrayList<Integer>)this.visited.clone();
-            Random R = new Random();
-            for (int i = 0; i < this.visited.size() / 4; i++) {
-                temp_visited.remove(R.nextInt(temp_visited.size()));
+            for (int i = 0; i < this.visited.size() / 2; i++) {
+                temp_visited.remove(0);
+                temp_visited.trimToSize();
             }
             for (int i = 0; i < Ant.graph.getVertex(); i++) {
                 if (Ant.graph.getMatrix()[this.current][i] != 0 && !temp_visited.contains(i)) {
@@ -103,6 +116,12 @@ public class Ant {
         return allowed;
     }
 
+    /**
+     * Calculating the probability of going to next possible node.
+     * @param next Possible node to get to from current vertex.
+     * @return Probability of choosing given node.
+     * @throws ArithmeticException Division by zero.
+     */
     private Double calculateProbability(int next) throws ArithmeticException{
         double numerator, denominator = 0;
 
@@ -120,18 +139,49 @@ public class Ant {
         return numerator / denominator;
     }
 
+    /**
+     * Method for applying pheromone after ending the travel.
+     */
     public void applyPheromone() {
         for (int i = 0, j = 1; j < this.visited.size(); i++, j++) {
-            Ant.graph.getPheromone()[this.visited.get(i)][this.visited.get(j)] += 1.0 / this.distance;
-            Ant.graph.getPheromone()[this.visited.get(j)][this.visited.get(i)] += 1.0 / this.distance;
+            int x = this.visited.get(i), y = this.visited.get(j);
+            Ant.graph.getPheromone()[x][y] += 1.0 / this.distance;
+            Ant.graph.getPheromone()[y][x] += 1.0 / this.distance;
         }
     }
 
+    /**
+     * Vaporizes a proper amount of pheromones on every edge.
+     */
     public static void vaporize(){
         for (int i = 0; i < Ant.graph.getVertex(); i++) {
             for (int j = 0; j < Ant.graph.getVertex(); j++) {
                 graph.getPheromone()[i][j] *= 1.0 - Ant.rho;
             }
         }
+    }
+
+    /**
+     * Get the list of visited nodes.
+     * @return ArrayList of visited nodes.
+     */
+    public ArrayList<Integer> getVisited() {
+        return this.visited;
+    }
+
+    /**
+     * Get the total distance.
+     * @return Total distance of the ant path.
+     */
+    public int getDistance() {
+        return this.distance;
+    }
+
+    /**
+     * Get graph on which ants are making calculations.
+     * @return Ant's Graph.
+     */
+    public static Graph getGraph(){
+        return Ant.graph;
     }
 }

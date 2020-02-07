@@ -43,11 +43,12 @@ public class Main {
 
     /**
      * Optimization method containing every variable and object necessary for optimization.
+     *
      * @param colony = Number of ants.
      */
     private static void optimize(Double colony) {
         boolean changeMade = false;
-        if(Main.noChange > 20){
+        if (Main.noChange > 20) {
             Ant.getGraph().smoothPheromone();
             Main.noChange = 0;
         }
@@ -57,7 +58,7 @@ public class Main {
 
         for (var A : ants) {
             A.travel();
-            if(!Main.startAssign){
+            if (!Main.startAssign) {
                 Main.startDistance = A.getDistance();
                 Main.startAssign = true;
             }
@@ -70,7 +71,7 @@ public class Main {
                 System.out.println("Best cost: " + Main.bestDistance + " Path len: " + Main.bestPath.size());
             }
         }
-        if(!changeMade)
+        if (!changeMade)
             Main.noChange++;
         for (var A : best_ants)
             A.applyPheromone();

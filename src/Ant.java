@@ -1,7 +1,7 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.ArrayList;
 
 public class Ant {
     private static Graph graph;
@@ -16,16 +16,37 @@ public class Ant {
 
     /**
      * Parameters setting for ACO.
+     *
      * @param graph = Graph object for ant to access.
      * @param alpha = Pheromone impact.
-     * @param beta = Distance impact.
-     * @param rho = Vaporize coefficient.
+     * @param beta  = Distance impact.
+     * @param rho   = Vaporize coefficient.
      */
-    public static void setParameters(Graph graph, double alpha, double beta, double rho){
+    public static void setParameters(Graph graph, double alpha, double beta, double rho) {
         Ant.graph = graph;
         Ant.alpha = alpha;
         Ant.beta = beta;
         Ant.rho = rho;
+    }
+
+    /**
+     * Vaporizes a proper amount of pheromones on every edge.
+     */
+    public static void vaporize() {
+        for (int i = 0; i < Ant.graph.getVertex(); i++) {
+            for (int j = 0; j < Ant.graph.getVertex(); j++) {
+                graph.getPheromone()[i][j] *= 1.0 - Ant.rho;
+            }
+        }
+    }
+
+    /**
+     * Get graph on which ants are making calculations.
+     *
+     * @return = Ant's Graph.
+     */
+    public static Graph getGraph() {
+        return Ant.graph;
     }
 
     /**
@@ -38,7 +59,7 @@ public class Ant {
         while (unique_visited.size() != Ant.graph.getVertex()) {
             this.selectNext();
             long end = System.currentTimeMillis();
-            if((end - start) / 1000.0 > 3.0){
+            if ((end - start) / 1000.0 > 3.0) {
                 System.out.println("Ant was travelling too long. Breaking...");
                 break;
             }
@@ -70,10 +91,10 @@ public class Ant {
                 }
             }
         }
-        if(this.previous != null && Ant.graph.getMatrix()[this.previous][this.current] < Ant.graph.getMatrix()[this.current][next]){
+        if (this.previous != null && Ant.graph.getMatrix()[this.previous][this.current] < Ant.graph.getMatrix()[this.current][next]) {
             this.distance -= Ant.graph.getMatrix()[this.previous][this.current];
             this.distance += Ant.graph.getMatrix()[this.previous][this.current] * 10;
-        }else {
+        } else {
             this.distance += Ant.graph.getMatrix()[this.current][next];
         }
         this.visited.add(next);
@@ -83,6 +104,7 @@ public class Ant {
 
     /**
      * Random choice from possible starting nodes.
+     *
      * @return = Random starting node.
      */
     private int drawStart() {
@@ -91,6 +113,7 @@ public class Ant {
 
     /**
      * Generates allowed moves by accessing adjacent nodes of the current vertex.
+     *
      * @return = ArrayList of allowed moves.
      */
     private ArrayList<Integer> generateAllowedMoves() {
@@ -101,7 +124,7 @@ public class Ant {
             }
         }
         while (allowed.isEmpty()) {
-            ArrayList<Integer> temp_visited = (ArrayList<Integer>)this.visited.clone();
+            ArrayList<Integer> temp_visited = (ArrayList<Integer>) this.visited.clone();
             for (int i = 0; i < this.visited.size() / 2; i++) {
                 temp_visited.remove(0);
                 temp_visited.trimToSize();
@@ -118,11 +141,12 @@ public class Ant {
 
     /**
      * Calculating the probability of going to next possible node.
+     *
      * @param next = Possible node to get to from current vertex.
      * @return = Probability of choosing given node.
      * @throws ArithmeticException = Division by zero.
      */
-    private Double calculateProbability(int next) throws ArithmeticException{
+    private Double calculateProbability(int next) throws ArithmeticException {
         double numerator, denominator = 0;
 
         numerator = Math.pow(Ant.graph.getPheromone()[this.current][next], Ant.alpha) *
@@ -133,7 +157,7 @@ public class Ant {
                     (1 / Math.pow(Ant.graph.getMatrix()[this.current][move], Ant.beta));
         }
 
-        if(denominator == 0.0)
+        if (denominator == 0.0)
             throw new ArithmeticException("Division by 0!");
 
         return numerator / denominator;
@@ -151,18 +175,8 @@ public class Ant {
     }
 
     /**
-     * Vaporizes a proper amount of pheromones on every edge.
-     */
-    public static void vaporize(){
-        for (int i = 0; i < Ant.graph.getVertex(); i++) {
-            for (int j = 0; j < Ant.graph.getVertex(); j++) {
-                graph.getPheromone()[i][j] *= 1.0 - Ant.rho;
-            }
-        }
-    }
-
-    /**
      * Get the list of visited nodes.
+     *
      * @return = ArrayList of visited nodes.
      */
     public ArrayList<Integer> getVisited() {
@@ -171,17 +185,10 @@ public class Ant {
 
     /**
      * Get the total distance.
+     *
      * @return = Total distance of the ant path.
      */
     public int getDistance() {
         return this.distance;
-    }
-
-    /**
-     * Get graph on which ants are making calculations.
-     * @return = Ant's Graph.
-     */
-    public static Graph getGraph(){
-        return Ant.graph;
     }
 }

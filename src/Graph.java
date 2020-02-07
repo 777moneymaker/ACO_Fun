@@ -1,14 +1,15 @@
 import java.io.*;
-import java.util.Random;
 import java.util.ArrayList;
+import java.util.Random;
 
-public class Graph{
+public class Graph {
     private int vertex;
     private int[][] matrix;
     private double[][] pheromone;
 
     /**
      * Constructor for the Graph object.
+     *
      * @param n_vertices = Number of vertices of the graph.
      */
     public Graph(int n_vertices) {
@@ -18,6 +19,7 @@ public class Graph{
 
     /**
      * Creation of the pheromone matrix.
+     *
      * @return Pheromone matrix.
      */
     private double[][] createPheromone() {
@@ -39,18 +41,18 @@ public class Graph{
      */
     public void smoothPheromone() {
         double max = 0.0, min = 1.0, min_pheromone;
-        for(var row : this.matrix){
-            for(var num : row){
-                if(num > max) max = num;
-                if(num < min) min = num;
+        for (var row : this.matrix) {
+            for (var num : row) {
+                if (num > max) max = num;
+                if (num < min) min = num;
             }
         }
 
         min_pheromone = max - min;
-        for(var row : this.pheromone){
-            for(int i = 0; i < row.length; i++){
-                if(row[i] > min_pheromone){
-                    row[i] = min_pheromone * Math.tanh(row[i]/min_pheromone);
+        for (var row : this.pheromone) {
+            for (int i = 0; i < row.length; i++) {
+                if (row[i] > min_pheromone) {
+                    row[i] = min_pheromone * Math.tanh(row[i] / min_pheromone);
                 }
             }
         }
@@ -71,6 +73,7 @@ public class Graph{
 
     /**
      * Get the pheromone matrix.
+     *
      * @return = Pheromone matrix.
      */
     public double[][] getPheromone() {
@@ -79,6 +82,7 @@ public class Graph{
 
     /**
      * Creation of the distance matrix.
+     *
      * @return = Distance matrix.
      */
     private int[][] createMatrix() {
@@ -104,9 +108,10 @@ public class Graph{
 
     /**
      * Save matrix to txt file.
+     *
      * @param instanceFile = File to save distance matrix to.
      */
-    public void saveMatrix(String instanceFile){
+    public void saveMatrix(String instanceFile) {
         try {
             BufferedWriter reader = new BufferedWriter(new FileWriter(instanceFile));
             for (var row : this.matrix) {
@@ -116,7 +121,8 @@ public class Graph{
                 reader.newLine();
             }
             reader.flush();
-        } catch (IOException e){}
+        } catch (IOException e) {
+        }
     }
 
     /**
@@ -133,6 +139,7 @@ public class Graph{
 
     /**
      * Loading the matrix from given filename. Updating the number of vertices.
+     *
      * @param instanceFile = File containing matrix (instance).
      * @throws IOException = File not found.
      */
@@ -150,8 +157,8 @@ public class Graph{
         reader.close();
 
         int[][] newMatrix = new int[matrix.size()][matrix.size()];
-        for(int i = 0; i < newMatrix.length; i++){
-            for(int j = 0; j < newMatrix.length; j++){
+        for (int i = 0; i < newMatrix.length; i++) {
+            for (int j = 0; j < newMatrix.length; j++) {
                 newMatrix[i][j] = matrix.get(i).get(j);
             }
         }
@@ -162,6 +169,7 @@ public class Graph{
 
     /**
      * Get the distance matrix.
+     *
      * @return = Distance matrix.
      */
     public int[][] getMatrix() {
@@ -170,6 +178,7 @@ public class Graph{
 
     /**
      * Get the number of vertices.
+     *
      * @return = Number of vertices.
      */
     public int getVertex() {
@@ -178,6 +187,7 @@ public class Graph{
 
     /**
      * nCr (Newton symbol). Used to calculate how many random edges should be deleted while creating the distance matrix.
+     *
      * @param n = Number of elements.
      * @param k = k-subset of set containing n elements.
      * @return = Result of n Choose r calculation.

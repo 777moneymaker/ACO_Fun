@@ -14,12 +14,12 @@ public class Main {
         String graphFile = scan.next();
 
         /*
-            @graphSize Unnecessary if graph is loaded from the file. You can set it to 1.0.
-            @iteration Number of iterations.
-            @colony Number of ants. Passed to optimize method.
-            @alpha Pheromone impact on the decision of the ant.
-            @beta Distance impact on the decision of the ant..
-            @rho Percent (%) of the pheromone evaporating after every iteration.
+            @graphSize = Unnecessary if graph is loaded from the file. You can set it to 1.0.
+            @iteration = Number of iterations.
+            @colony = Number of ants. Passed to optimize method.
+            @alpha = Pheromone impact on the decision of the ant.
+            @beta = Distance impact on the decision of the ant..
+            @rho = Percent (%) of the pheromone evaporating after every iteration.
          */
         System.out.println("Give graph size, iterations, colony, alpha, beta, rho:");
         Double graphSize = scan.nextDouble(),
@@ -43,7 +43,7 @@ public class Main {
 
     /**
      * Optimization method containing every variable and object necessary for optimization.
-     * @param colony Number of ants.
+     * @param colony = Number of ants.
      */
     private static void optimize(Double colony) {
         boolean changeMade = false;

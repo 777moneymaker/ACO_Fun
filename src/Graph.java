@@ -9,7 +9,7 @@ public class Graph{
 
     /**
      * Constructor for the Graph object.
-     * @param n_vertices Number of vertices of the graph.
+     * @param n_vertices = Number of vertices of the graph.
      */
     public Graph(int n_vertices) {
         this.vertex = n_vertices;
@@ -71,7 +71,7 @@ public class Graph{
 
     /**
      * Get the pheromone matrix.
-     * @return Pheromones matrix.
+     * @return = Pheromone matrix.
      */
     public double[][] getPheromone() {
         return pheromone;
@@ -79,7 +79,7 @@ public class Graph{
 
     /**
      * Creation of the distance matrix.
-     * @return Distance matrix.
+     * @return = Distance matrix.
      */
     private int[][] createMatrix() {
         int[][] matrix = new int[this.vertex][this.vertex];
@@ -104,7 +104,7 @@ public class Graph{
 
     /**
      * Save matrix to txt file.
-     * @param instanceFile File to save distance matrix to.
+     * @param instanceFile = File to save distance matrix to.
      */
     public void saveMatrix(String instanceFile){
         try {
@@ -133,8 +133,8 @@ public class Graph{
 
     /**
      * Loading the matrix from given filename. Updating the number of vertices.
-     * @param instanceFile File containing matrix (instance).
-     * @throws IOException File not found.
+     * @param instanceFile = File containing matrix (instance).
+     * @throws IOException = File not found.
      */
     public void loadMatrix(String instanceFile) throws IOException {
         String line;
@@ -162,7 +162,7 @@ public class Graph{
 
     /**
      * Get the distance matrix.
-     * @return Distance matrix.
+     * @return = Distance matrix.
      */
     public int[][] getMatrix() {
         return this.matrix;
@@ -170,7 +170,7 @@ public class Graph{
 
     /**
      * Get the number of vertices.
-     * @return Number of vertices.
+     * @return = Number of vertices.
      */
     public int getVertex() {
         return this.vertex;
@@ -178,9 +178,9 @@ public class Graph{
 
     /**
      * nCr (Newton symbol). Used to calculate how many random edges should be deleted while creating the distance matrix.
-     * @param n Number of elements.
-     * @param k k-subset of set containing n elements.
-     * @return Result of n Choose r calculation.
+     * @param n = Number of elements.
+     * @param k = k-subset of set containing n elements.
+     * @return = Result of n Choose r calculation.
      */
     private int n_Choose_k(int n, int k) {
         int numerator = 1, denominator = 1;

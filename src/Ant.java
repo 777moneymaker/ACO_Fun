@@ -16,10 +16,10 @@ public class Ant {
 
     /**
      * Parameters setting for ACO.
-     * @param graph Graph object for ant to access.
-     * @param alpha Pheromone impact.
-     * @param beta Distance impact.
-     * @param rho Vaporize coefficient.
+     * @param graph = Graph object for ant to access.
+     * @param alpha = Pheromone impact.
+     * @param beta = Distance impact.
+     * @param rho = Vaporize coefficient.
      */
     public static void setParameters(Graph graph, double alpha, double beta, double rho){
         Ant.graph = graph;
@@ -83,7 +83,7 @@ public class Ant {
 
     /**
      * Random choice from possible starting nodes.
-     * @return Random starting node.
+     * @return = Random starting node.
      */
     private int drawStart() {
         return new Random().nextInt(Ant.graph.getVertex());
@@ -91,7 +91,7 @@ public class Ant {
 
     /**
      * Generates allowed moves by accessing adjacent nodes of the current vertex.
-     * @return ArrayList of allowed moves.
+     * @return = ArrayList of allowed moves.
      */
     private ArrayList<Integer> generateAllowedMoves() {
         ArrayList<Integer> allowed = new ArrayList<>();
@@ -118,9 +118,9 @@ public class Ant {
 
     /**
      * Calculating the probability of going to next possible node.
-     * @param next Possible node to get to from current vertex.
-     * @return Probability of choosing given node.
-     * @throws ArithmeticException Division by zero.
+     * @param next = Possible node to get to from current vertex.
+     * @return = Probability of choosing given node.
+     * @throws ArithmeticException = Division by zero.
      */
     private Double calculateProbability(int next) throws ArithmeticException{
         double numerator, denominator = 0;
@@ -163,7 +163,7 @@ public class Ant {
 
     /**
      * Get the list of visited nodes.
-     * @return ArrayList of visited nodes.
+     * @return = ArrayList of visited nodes.
      */
     public ArrayList<Integer> getVisited() {
         return this.visited;
@@ -171,7 +171,7 @@ public class Ant {
 
     /**
      * Get the total distance.
-     * @return Total distance of the ant path.
+     * @return = Total distance of the ant path.
      */
     public int getDistance() {
         return this.distance;
@@ -179,7 +179,7 @@ public class Ant {
 
     /**
      * Get graph on which ants are making calculations.
-     * @return Ant's Graph.
+     * @return = Ant's Graph.
      */
     public static Graph getGraph(){
         return Ant.graph;
